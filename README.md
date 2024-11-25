@@ -17,6 +17,8 @@ To include MongoScala3Codecs in your Scala project, add the following dependency
 libraryDependencies += "io.github.mbannour" %% "mongoscala3codecs" % "0.0.1-M2"
 ```
 
+## Compatibility Matrix
+
 ## Features
 - **Compile-Time Validation**: Ensures only valid case classes can have codecs generated.
 - **Automatic Codec Generation**: Avoids boilerplate for encoding and decoding BSON.
