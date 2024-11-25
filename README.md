@@ -14,7 +14,7 @@
 To include MongoScala3Codecs in your Scala project, add the following dependency:
 
 ```scala
-libraryDependencies += "io.github.mbannour" %% "mongoScala3Codecs" % "0.0.1-M2"
+libraryDependencies += "io.github.mbannour" %% "mongoscala3codecs" % "0.0.1-M2"
 ```
 
 ## Features
