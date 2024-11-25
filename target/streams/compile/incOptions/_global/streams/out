@@ -1,0 +1,46 @@
+[0m[[0m[0mdebug[0m] [0m[0mCreated transactional ClassFileManager with tempDir = /home/runner/work/MongoScala3Codecs/MongoScala3Codecs/target/scala-3.5.1/classes.bak[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to delete class files:[0m
+[0m[[0m[0mdebug[0m] [0m[0mWe backup class files:[0m
+[0m[[0m[0mdebug[0m] [0m[0mCreated transactional ClassFileManager with tempDir = /home/runner/work/MongoScala3Codecs/MongoScala3Codecs/target/scala-3.5.1/classes.bak[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to delete class files:[0m
+[0m[[0m[0mdebug[0m] [0m[0mWe backup class files:[0m
+[0m[[0m[0mdebug[0m] [0m[0mRegistering generated classes:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFactory.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassCodecGenerator$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFactory$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassBsonWriter.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassBsonWriter$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassCodecGenerator.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CodecProviderMacro.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFieldMapper$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CodecProviderMacro$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFieldMapper.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFactory.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassCodecGenerator$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFactory$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper$$anon$1.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName$$anon$1.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassBsonWriter.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassMapper$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassBsonWriter$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassCodecGenerator.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AnnotationName.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CodecProviderMacro.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFieldMapper$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CodecProviderMacro$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CaseClassFieldMapper.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap$$anon$1.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClassToCaseFlagMap$.tasty[0m
+[0m[[0m[0mdebug[0m] [0m[0mRemoving the temporary directory used for backing up class files: /home/runner/work/MongoScala3Codecs/MongoScala3Codecs/target/scala-3.5.1/classes.bak[0m

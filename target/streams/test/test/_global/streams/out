@@ -1,0 +1,53 @@
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(m.bannour.macrocodecs.CaseClassMapperSpec, org.scalatest.tools.Framework$$anon$1@3ed1e51d, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(m.bannour.macrocodecs.CaseClassFactorySpec, org.scalatest.tools.Framework$$anon$1@3ed1e51d, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(m.bannour.macrocodecs.CaseClassFieldMapperSpec, org.scalatest.tools.Framework$$anon$1@3ed1e51d, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(m.bannour.macrocodecs.ClassToCaseFlagMapSpec, org.scalatest.tools.Framework$$anon$1@3ed1e51d, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassFieldMapperSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassFieldMapper[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should map case class fields correctly[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should handle nested case classes and primitives correctly[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should fail for unsupported types at compile time[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mClassToCaseFlagMapSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mclassToCaseClassMap[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should handle primitive types[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should identify case classes[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should identify sealed classes[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should handle nested case classes[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should not flag non-case classes as case classes[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should handle mixed types[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(m.bannour.macrocodecs.AnnotationNameSpec, org.scalatest.tools.Framework$$anon$1@3ed1e51d, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassMapperSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassMapper[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should map simple sealed hierarchies[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should map sealed hierarchies with multiple subclasses[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should return the case class itself if no subclasses exist[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[33m- should fail for non-case classes !!! IGNORED !!![0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should handle nested case classes[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassFactorySpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCaseClassFactory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should instantiate a simple case class[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should instantiate a nested case class[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should instantiate a case class with optional fields[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should fail for unsupported types at compile time[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should throw an exception for missing required fields[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should throw an exception for invalid field data types[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should instantiate a case class with a Scala 3 enum field[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should throw an exception for invalid enum field values[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAnnotationNameSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should return the annotation value for a field with @BsonProperty[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should return None for a field without @BsonProperty[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should return None for a non-existent field[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should return None when no fields have annotations[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should return None for an empty case class[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- findAnnotationValue should handle fields with multiple annotations[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mRun completed in 349 milliseconds.[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTotal number of tests run: 27[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mSuites: completed 5, aborted 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTests: succeeded 27, failed 0, canceled 0, ignored 1, pending 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAll tests passed.[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mPassed tests:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	m.bannour.macrocodecs.CaseClassFieldMapperSpec[0m
+[0m[[0m[0mdebug[0m] [0m[0m	m.bannour.macrocodecs.AnnotationNameSpec[0m
+[0m[[0m[0mdebug[0m] [0m[0m	m.bannour.macrocodecs.CaseClassMapperSpec[0m
+[0m[[0m[0mdebug[0m] [0m[0m	m.bannour.macrocodecs.CaseClassFactorySpec[0m
+[0m[[0m[0mdebug[0m] [0m[0m	m.bannour.macrocodecs.ClassToCaseFlagMapSpec[0m
