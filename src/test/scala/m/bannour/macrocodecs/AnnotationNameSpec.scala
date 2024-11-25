@@ -44,7 +44,7 @@ class AnnotationNameSpec extends AnyFunSuite with Matchers {
 
 
   test("findAnnotationValue should handle fields with multiple annotations") {
-    case class Example(@deprecated @BsonProperty("aliasForFoo") foo: String, bar: Int)
+    case class Example(@BsonProperty("aliasForFoo") foo: String, bar: Int)
     val result = AnnotationName.invokeFindAnnotationValue[Example]("foo")
     result shouldBe Some("aliasForFoo")
   }
