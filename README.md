@@ -14,7 +14,7 @@
 To include MongoScala3Codecs in your Scala project, add the following dependency:
 
 ```scala
-libraryDependencies += "m.bannour" %% "mongoScala3Codecs" % "0.0.1"
+libraryDependencies += "io.github.mbannour" %% "mongoScala3Codecs" % "0.0.1-M2"
 ```
 
 ## Features
@@ -42,6 +42,13 @@ The library leverages Scala 3 macros to analyze case classes at compile time and
 
 - **Non-Case Classes**: Only case classes are supported; non-case classes are not compatible.
 - **Scala 3 Requirement**: The library relies on Scala 3 macros for codec generation and requires a Scala 3 project.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
+Main Developer: Mohamed Ali Bannour  
+Email: med.ali.bennour@gmail.com
 
 
 

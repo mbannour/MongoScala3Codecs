@@ -6,7 +6,7 @@ import org.bson.codecs.EncoderContext
 import scala.quoted.*
 
 object CaseClassBsonWriter:
-  
+
   inline def writeCaseClassData[T](className: String, writer: BsonWriter, value: T, encoderContext: EncoderContext): Unit =
     ${ writeCaseClassDataImpl[T]('className, 'writer, 'value, 'encoderContext) }
 

@@ -55,7 +55,6 @@ object CaseClassCodecGenerator:
         def getInstance(className: String, fieldsData: Map[String, Any]): T =
           CaseClassFactory.getInstance[T](fieldsData)
 
-
         override def encode(writer: BsonWriter, value: T, encoderContext: EncoderContext): Unit =
           if value == null then throw new BsonInvalidOperationException(s"Invalid value for $encoderClass found a `null` value.")
           writeValue(writer, value, encoderContext)
@@ -87,10 +86,9 @@ object CaseClassCodecGenerator:
             val typeArgs = if name == classFieldName then List(classOf[String]) else fieldTypeArgsMap.getOrElse(name, List.empty)
 
             if typeArgs.isEmpty then reader.skipValue()
-            else {
+            else
               val value = readValue(reader, decoderContext, typeArgs.head, typeArgs.tail, fieldTypeArgsMap)
               map += (name -> value)
-            }
           end while
 
           reader.readEndDocument()
@@ -175,7 +173,7 @@ object CaseClassCodecGenerator:
             fieldTypeArgsMap: Map[String, List[Class[?]]]
         ): V =
           if classToCaseClassMap.getOrElse(clazz, false) || typeArgs.isEmpty then registry.get(clazz).decode(reader, decoderContext)
-          else {
+          else
             val map = mutable.Map[String, Any]()
             reader.readStartDocument()
             while reader.readBsonType ne BsonType.END_OF_DOCUMENT do
@@ -185,7 +183,6 @@ object CaseClassCodecGenerator:
               else map += (name -> readValue(reader, decoderContext, fieldClazzTypeArgs.head, fieldClazzTypeArgs.tail, fieldTypeArgsMap))
             reader.readEndDocument()
             map.toMap.asInstanceOf[V]
-          }
 
         protected def getClassName(reader: BsonReader, decoderContext: DecoderContext): String =
           if hasClassFieldName then
@@ -195,17 +192,15 @@ object CaseClassCodecGenerator:
               val currentType = reader.readBsonType
 
               if currentType == BsonType.END_OF_DOCUMENT then None
-              else {
+              else
                 val name = reader.readName
 
                 if name == classFieldName then
                   val className = $codecRegistry.get(classOf[String]).decode(reader, decoderContext)
                   Some(className)
-                else {
+                else
                   reader.skipValue()
                   readOptionalClassName()
-                }
-              }
               end if
             end readOptionalClassName
 

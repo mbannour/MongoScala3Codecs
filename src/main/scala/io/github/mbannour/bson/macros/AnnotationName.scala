@@ -5,7 +5,7 @@ import org.mongodb.scala.bson.annotations.BsonProperty
 import scala.quoted.*
 
 object AnnotationName:
-  
+
   inline def invokeFindAnnotationValue[T](fieldName: String): Option[String] = ${
     AnnotationName.findAnnotationValue[T]('fieldName)
   }
