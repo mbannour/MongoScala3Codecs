@@ -2,12 +2,20 @@
 
 ![mongoScala3Codecs version](https://img.shields.io/badge/mongoScala3Codecs-0.0.1-brightgreen)
 ![mongoScala3Codecs compatibility](https://img.shields.io/badge/Scala-3.0%2B-blue)
+
 `MongoScala3Codecs` is a lightweight and powerful library designed to simplify BSON serialization and deserialization for Scala case classes. It leverages Scala 3 macros to generate BSON codecs at compile time, providing type-safe and performant handling of BSON data. This library is particularly useful when working with MongoDB in Scala.
 
 ## Compatibility
 
 - **Scala 3**: This library is compatible only with Scala 3, leveraging its advanced macro capabilities for compile-time codec generation.
 
+## Installation
+
+To include MongoScala3Codecs in your Scala project, add the following dependency:
+
+```scala
+libraryDependencies += "m.bannour" %% "mongoScala3Codecs" % "0.0.1"
+```
 
 ## Features
 - **Compile-Time Validation**: Ensures only valid case classes can have codecs generated.
@@ -29,7 +37,6 @@ The library leverages Scala 3 macros to analyze case classes at compile time and
 - **Primitive Types**: Handles standard Scala primitives like `Int`, `Double`, `String`, etc.
 - **Custom Types**: Supports `ObjectId` and other MongoDB-specific types.
 
----
 
 ## Limitations
 
@@ -38,15 +45,6 @@ The library leverages Scala 3 macros to analyze case classes at compile time and
 
 
 
----
-
-## Installation
-
-To include MongoScala3Codecs in your Scala project, add the following dependency:
-
-```scala
-libraryDependencies += "m.bannour" %% "mongoScala3Codecs" % "0.0.1"
-```
 
 
 
