@@ -1,6 +1,5 @@
-package m.bannour.macrocodecs
+package io.github.mbannour.bson.macros
 
-import io.github.mbannour.bson.macros.CaseClassFactory
 import org.mongodb.scala.bson.annotations.BsonProperty
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
