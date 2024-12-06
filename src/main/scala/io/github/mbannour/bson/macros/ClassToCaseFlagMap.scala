@@ -11,7 +11,6 @@ object ClassToCaseFlagMap:
 
     import quotes.reflect.*
 
-    // A helper map to store primitive to boxed type mappings
     val primitiveTypesMap: Map[TypeRepr, TypeRepr] = Map(
       TypeRepr.of[Boolean] -> TypeRepr.of[java.lang.Boolean],
       TypeRepr.of[Byte] -> TypeRepr.of[java.lang.Byte],
@@ -23,11 +22,9 @@ object ClassToCaseFlagMap:
       TypeRepr.of[Short] -> TypeRepr.of[java.lang.Short]
     )
 
-    // Check if a type is a case class or sealed class
     def isCaseClassOrSealed(tpe: TypeRepr): Boolean =
       tpe.typeSymbol.isClassDef && (tpe.typeSymbol.flags.is(Flags.Case) || tpe.typeSymbol.flags.is(Flags.Sealed))
 
-    // Recursive method to flatten and collect all fields including nested case classes
     def collectFields(tpe: TypeRepr): List[TypeRepr] =
       val paramTypes = tpe.typeSymbol.primaryConstructor.paramSymss.flatten.collect {
         case sym if sym.isTerm && sym.isValDef =>
@@ -35,12 +32,11 @@ object ClassToCaseFlagMap:
             case '[f] => TypeRepr.of[f]
       }
       paramTypes.flatMap { fieldType =>
-        if isCaseClassOrSealed(fieldType) then collectFields(fieldType) :+ fieldType // Collect nested fields and the class itself
-        else List(fieldType) // Primitive or other non-case class type
+        if isCaseClassOrSealed(fieldType) then collectFields(fieldType) :+ fieldType
+        else List(fieldType)
       }
     end collectFields
 
-    // Flatten type arguments and map primitive types to their boxed equivalents
     def flattenTypeArgs(tpe: TypeRepr): List[TypeRepr] =
       val typeArgs = tpe match
         case AppliedType(_, args) => args
@@ -49,19 +45,16 @@ object ClassToCaseFlagMap:
       val types = tpe +: typeArgs.flatMap(flattenTypeArgs)
       types.map(t => primitiveTypesMap.getOrElse(t, t))
 
-    // Get all known types (case classes and their fields recursively)
     def getFieldTypes(tpe: TypeRepr): List[TypeRepr] =
-      collectFields(tpe) :+ tpe // Include the current type itself
+      collectFields(tpe) :+ tpe
 
-    // Function to create the Map[Class[?], Boolean]
     val flattenedFieldTypes: List[TypeRepr] =
       val mainType = TypeRepr.of[T]
-      getFieldTypes(mainType).flatMap(t => flattenTypeArgs(t)) // Recursively flatten fields
+      getFieldTypes(mainType).flatMap(t => flattenTypeArgs(t))
 
     val classToCaseClassEntries: List[Expr[(Class[?], Boolean)]] = flattenedFieldTypes.distinct.map { tpe =>
       tpe.asType match
         case '[tType] =>
-          // Summon ClassTag to get runtime class and check if it's a case class or sealed class
           Expr.summon[ClassTag[tType]] match
             case Some(ct) =>
               val classExpr = '{ $ct.runtimeClass.asInstanceOf[Class[?]] }
@@ -71,7 +64,6 @@ object ClassToCaseFlagMap:
               report.errorAndAbort(s"Cannot summon ClassTag for type: ${tpe.show}")
     }
 
-    // Constructing the map from the entries
     val mapEntriesExpr = Varargs(classToCaseClassEntries)
     '{ Map[Class[?], Boolean](${ mapEntriesExpr }*) }
   end classToCaseClassMapImpl

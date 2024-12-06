@@ -1,4 +1,4 @@
-package m.bannour.macrocodecs
+package io.github.mbannour.bson.macros
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -17,7 +17,7 @@ class NonCaseClass
 
 class CaseClassMapperSpec extends AnyFlatSpec with Matchers {
 
-  import io.github.mbannour.bson.macros.CaseClassMapper._
+  import io.github.mbannour.bson.macros.CaseClassMapper.*
 
   "CaseClassMapper" should "map simple sealed hierarchies" in {
     val result = caseClassMap[Animal]

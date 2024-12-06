@@ -1,6 +1,5 @@
-package m.bannour.macrocodecs
+package io.github.mbannour.bson.macros
 
-import io.github.mbannour.bson.macros.AnnotationName
 import org.mongodb.scala.bson.annotations.BsonProperty
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers

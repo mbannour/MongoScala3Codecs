@@ -1,4 +1,4 @@
-package m.bannour.macrocodecs
+package io.github.mbannour.bson.macros
 
 import io.github.mbannour.bson.macros.CaseClassFieldMapper
 import org.mongodb.scala.bson.annotations.BsonProperty

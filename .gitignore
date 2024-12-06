@@ -1,6 +1,8 @@
 *.class
 *.log
 
+*.tasty
+
 .cache
 .history
 .env/
@@ -12,6 +14,7 @@ src_managed/
 ../project/boot/
 ../project/plugins/project/
 target/
+project/target/*
 
 
 .idea*

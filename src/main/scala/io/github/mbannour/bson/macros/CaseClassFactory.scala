@@ -13,15 +13,12 @@ object CaseClassFactory:
     val mainTypeRepr = TypeRepr.of[T]
     val mainTypeSymbol = mainTypeRepr.typeSymbol
 
-    // Ensure the type is a case class
     if !mainTypeSymbol.flags.is(Flags.Case) then
       val errorMsg = s"${mainTypeSymbol.name} is not a case class, and cannot be instantiated this way."
       report.errorAndAbort(errorMsg)
 
-    // Get the primary constructor parameters
     val constructorParams = mainTypeSymbol.primaryConstructor.paramSymss.flatten
 
-    // For each field, build an expression to fetch and cast the value from fieldData
     val fieldExprs: List[Expr[Any]] = constructorParams.map { param =>
       val paramName = param.name
       val paramType = param.tree match
@@ -55,11 +52,9 @@ object CaseClassFactory:
           nestedExpr
 
         case '[nestedT] if paramType.typeSymbol.flags.is(Flags.Enum) =>
-          // Get the fully qualified name of the enum's companion object
           val enumCompanionName = Expr(paramType.typeSymbol.companionModule.fullName)
-          val paramNameLiteral = Expr(paramName) // Lift paramName to an Expr for use in the macro-generated code
+          val paramNameLiteral = Expr(paramName)
 
-          // Generate the expression for calling valueOf on the enum's companion object
           val enumExpr = '{
             val rawValue = $fieldData.get($paramNameLiteral)
             rawValue match
@@ -72,8 +67,6 @@ object CaseClassFactory:
                   case ex: Exception =>
                     throw new RuntimeException("Error decoding enum field '" + ${ Expr(paramName) } + "': " + ex.getMessage, ex)
               case Some(enumValue: nestedT @unchecked) =>
-                // Already of the correct enum type
-
                 enumValue
               case None =>
                 throw new RuntimeException("Missing enum field: " + ${ Expr(paramName) })
@@ -99,7 +92,6 @@ object CaseClassFactory:
       end match
     }
 
-    // Construct an instance of T with the extracted fields
     val instance = Apply(Select(New(TypeIdent(mainTypeSymbol)), mainTypeSymbol.primaryConstructor), fieldExprs.map(_.asTerm)).asExprOf[T]
 
     instance

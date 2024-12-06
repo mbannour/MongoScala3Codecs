@@ -2,19 +2,30 @@ package io.github.mbannour.bson.macros
 
 import org.bson.BsonWriter
 import org.bson.codecs.EncoderContext
+import org.bson.codecs.configuration.CodecRegistry
 
 import scala.quoted.*
+import scala.reflect.ClassTag
 
 object CaseClassBsonWriter:
 
-  inline def writeCaseClassData[T](className: String, writer: BsonWriter, value: T, encoderContext: EncoderContext): Unit =
-    ${ writeCaseClassDataImpl[T]('className, 'writer, 'value, 'encoderContext) }
+  inline def writeCaseClassData[T](
+      className: String,
+      writer: BsonWriter,
+      value: T,
+      encoderContext: EncoderContext,
+      encodeNone: Boolean,
+      registry: CodecRegistry
+  ): Unit =
+    ${ writeCaseClassDataImpl[T]('className, 'writer, 'value, 'encoderContext, 'encodeNone, 'registry) }
 
   def writeCaseClassDataImpl[T: Type](
       className: Expr[String],
       writer: Expr[BsonWriter],
       value: Expr[T],
-      encoderContext: Expr[EncoderContext]
+      encoderContext: Expr[EncoderContext],
+      encodeNone: Expr[Boolean],
+      registry: Expr[CodecRegistry]
   )(using Quotes): Expr[Unit] =
     import quotes.reflect.*
 
@@ -22,6 +33,11 @@ object CaseClassBsonWriter:
     val typeSymbol = tpe.typeSymbol
 
     if !typeSymbol.flags.is(Flags.Case) then report.errorAndAbort(s"${typeSymbol.name} is not a case class.")
+
+    def getClassForType[T: Type](using Quotes): Expr[Class[T]] =
+      Expr.summon[ClassTag[T]] match
+        case Some(classTagExpr) => '{ $classTagExpr.runtimeClass.asInstanceOf[Class[T]] }
+        case None               => report.errorAndAbort(s"Could not find ClassTag for type: ${Type.show[T]}")
 
     val fieldWrites = typeSymbol.caseFields.map { field =>
 
@@ -48,16 +64,43 @@ object CaseClassBsonWriter:
           '{
             $fieldValueExpr.asInstanceOf[Option[t]] match
               case Some(innerValue) =>
-                $writer.writeName(${ fieldName })
-                ${ writeOptionField(Type.of[t], 'innerValue, writer, encoderContext) }
+                ${
+                  if TypeRepr.of[t].typeSymbol.flags.is(Flags.Case) then
+                    '{
+                      $writer.writeName(${ fieldName })
+                      $writer.writeStartDocument()
+                      writeCaseClassData(
+                        ${ Expr(Type.show[t]) },
+                        $writer,
+                        innerValue.asInstanceOf[t],
+                        $encoderContext,
+                        $encodeNone,
+                        $registry
+                      )
+                      $writer.writeEndDocument()
+                    }
+                  else
+                    '{
+                      $writer.writeName(${ fieldName })
+                      ${ writeOptionField(Type.of[t], 'innerValue, writer, encoderContext, encodeNone, registry) }
+                    }
+                }
               case None =>
-                $writer.writeNull(${ fieldName })
+                if { $encodeNone } then $writer.writeNull(${ fieldName })
+          }
+        case '[Iterable[t]] =>
+          '{
+            $writer.writeStartArray(${ fieldName })
+            $fieldValueExpr.asInstanceOf[Iterable[t]].foreach { item =>
+              ${ writeOptionField(Type.of[t], 'item, writer, encoderContext, encodeNone, registry) }
+            }
+            $writer.writeEndArray()
           }
         case '[List[t]] =>
           '{
             $writer.writeStartArray(${ fieldName })
             $fieldValueExpr.asInstanceOf[List[t]].foreach { item =>
-              ${ writeOptionField(Type.of[t], 'item, writer, encoderContext) }
+              ${ writeOptionField(Type.of[t], 'item, writer, encoderContext, encodeNone, registry) }
             }
             $writer.writeEndArray()
           }
@@ -68,18 +111,40 @@ object CaseClassBsonWriter:
               convertedTypeRepr
             case _ =>
               report.errorAndAbort("nestedType is not a scala.quoted.Type")
+
           if nestedTypeRepr.typeSymbol.flags.is(Flags.Case) then
             nestedTypeRepr.asType match
               case '[nt] =>
                 '{
+
                   $writer.writeName(${ fieldName })
                   $writer.writeStartDocument()
-                  CaseClassBsonWriter.writeCaseClassData(${ fieldName }, $writer, $fieldValueExpr.asInstanceOf[nt], $encoderContext)
+                  CaseClassBsonWriter.writeCaseClassData(
+                    ${ fieldName },
+                    $writer,
+                    $fieldValueExpr.asInstanceOf[nt],
+                    $encoderContext,
+                    $encodeNone,
+                    $registry
+                  )
                   $writer.writeEndDocument()
                 }
               case _ =>
                 report.errorAndAbort(s"Unsupported nested case class type: ${nestedTypeRepr.show}")
-          else '{ $writer.writeString(${ fieldName }, $fieldValueExpr.toString) }
+          else
+            nestedTypeRepr.asType match
+              case '[nt] =>
+                '{
+                  val clazz = ${ getClassForType[nt] }
+
+                  try
+                    val codec = $registry.get(clazz)
+                    $writer.writeName(${ fieldName })
+                    codec.encode($writer, $fieldValueExpr.asInstanceOf[nt], $encoderContext)
+                  catch
+                    case _: org.bson.codecs.configuration.CodecConfigurationException =>
+                      throw new IllegalArgumentException(s"No codec found for type: $clazz")
+                }
           end if
       end match
     }
@@ -87,7 +152,14 @@ object CaseClassBsonWriter:
     Expr.block(fieldWrites.toList, '{ () })
   end writeCaseClassDataImpl
 
-  def writeOptionField[T: Type](fieldType: Type[T], value: Expr[Any], writer: Expr[BsonWriter], encoderContext: Expr[EncoderContext])(using
+  def writeOptionField[T: Type](
+      fieldType: Type[T],
+      value: Expr[Any],
+      writer: Expr[BsonWriter],
+      encoderContext: Expr[EncoderContext],
+      encodeNone: Expr[Boolean],
+      registry: Expr[CodecRegistry]
+  )(using
       Quotes
   ): Expr[Unit] =
     import quotes.reflect.*
@@ -104,7 +176,7 @@ object CaseClassBsonWriter:
       case t if t =:= TypeRepr.of[Long] =>
         '{ $writer.writeInt64($value.asInstanceOf[Long]) }
       case t if t <:< TypeRepr.of[Product] && t.typeSymbol.flags.is(Flags.Case) =>
-        '{ writeCaseClassData(${ Expr(Type.show[T]) }, $writer, $value.asInstanceOf[T], $encoderContext) }
+        '{ writeCaseClassData(${ Expr(Type.show[T]) }, $writer, $value.asInstanceOf[T], $encoderContext, $encodeNone, $registry) }
       case _ =>
         '{ $writer.writeString($value.toString) }
     end match

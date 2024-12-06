@@ -2,9 +2,9 @@ package io.github.mbannour.bson.macros
 
 import org.bson.codecs.configuration.{CodecRegistries, CodecRegistry}
 import org.bson.codecs.{Codec, DecoderContext, Encoder, EncoderContext}
-import org.bson.types.ObjectId
 import org.bson.*
 
+import java.util.UUID
 import scala.collection.mutable
 import scala.quoted.*
 import scala.reflect.ClassTag
@@ -22,10 +22,12 @@ object CaseClassCodecGenerator:
     * @return
     *   A BSON codec instance for type `T`.
     */
-  inline def generateCodec[T](codecRegistry: CodecRegistry)(using classTag: ClassTag[T]): Codec[T] =
-    ${ generateCodecImpl[T]('codecRegistry, 'classTag) }
+  inline def generateCodec[T](codecRegistry: CodecRegistry, encodeNone: Boolean)(using classTag: ClassTag[T]): Codec[T] =
+    ${ generateCodecImpl[T]('codecRegistry, 'encodeNone, 'classTag) }
 
-  def generateCodecImpl[T: Type](codecRegistry: Expr[CodecRegistry], classTag: Expr[ClassTag[T]])(using Quotes): Expr[Codec[T]] =
+  def generateCodecImpl[T: Type](codecRegistry: Expr[CodecRegistry], encodeNone: Expr[Boolean], classTag: Expr[ClassTag[T]])(using
+      Quotes
+  ): Expr[Codec[T]] =
     import quotes.reflect.*
 
     val tpe = TypeRepr.of[T].typeSymbol
@@ -41,11 +43,7 @@ object CaseClassCodecGenerator:
         val classToCaseClassMap: Map[Class[?], Boolean] = ClassToCaseFlagMap.classToCaseClassMap[T]
         val classFieldTypeArgsMap: Map[String, Map[String, List[Class[?]]]] = CaseClassFieldMapper.createClassFieldTypeArgsMap[T]
         lazy val caseClassesMapInv: Map[Class[?], String] = caseClassesMap.map(_.swap)
-        val registry: CodecRegistry = CodecRegistries.fromRegistries(
-          CodecRegistries.fromProviders(
-            new org.bson.codecs.ValueCodecProvider(),
-            new org.bson.codecs.BsonValueCodecProvider()
-          ),
+        lazy val registry: CodecRegistry = CodecRegistries.fromRegistries(
           $codecRegistry,
           CodecRegistries.fromCodecs(this)
         )
@@ -62,9 +60,10 @@ object CaseClassCodecGenerator:
         protected def writeValue[V](writer: BsonWriter, value: V, encoderContext: EncoderContext): Unit =
           writer.writeStartDocument()
           val clazz = value.getClass
+
           caseClassesMapInv.get(clazz) match
             case Some(className) =>
-              CaseClassBsonWriter.writeCaseClassData(className, writer, value.asInstanceOf[T], encoderContext)
+              CaseClassBsonWriter.writeCaseClassData(className, writer, value.asInstanceOf[T], encoderContext, $encodeNone, registry)
             case None =>
               val codec = registry.get(clazz).asInstanceOf[Encoder[V]]
               encoderContext.encodeWithChildContext(codec, writer, value)
@@ -75,26 +74,27 @@ object CaseClassCodecGenerator:
 
           val className = getClassName(reader, decoderContext)
 
-          val fieldTypeArgsMap: Map[String, List[Class[?]]] = classFieldTypeArgsMap.getOrElse(className, Map.empty)
+          val fieldTypeArgsMap: Map[String, List[Class[?]]] =
+            classFieldTypeArgsMap.getOrElse(className, Map.empty)
 
           val map = mutable.Map[String, Any]()
           reader.readStartDocument()
 
-          while reader.readBsonType ne BsonType.END_OF_DOCUMENT do
+          while reader.readBsonType != BsonType.END_OF_DOCUMENT do
             val name = reader.readName
-
-            val typeArgs = if name == classFieldName then List(classOf[String]) else fieldTypeArgsMap.getOrElse(name, List.empty)
+            val typeArgs =
+              if name == classFieldName then List(classOf[String])
+              else fieldTypeArgsMap.getOrElse(name, List.empty)
 
             if typeArgs.isEmpty then reader.skipValue()
-            else
+            else {
               val value = readValue(reader, decoderContext, typeArgs.head, typeArgs.tail, fieldTypeArgsMap)
               map += (name -> value)
+            }
           end while
 
           reader.readEndDocument()
-
           val instance = getInstance(className, map.toMap)
-
           instance
         end decode
 
@@ -130,14 +130,17 @@ object CaseClassCodecGenerator:
               reader.readNull()
               null.asInstanceOf[V] // scalastyle:ignore
 
-            case BsonType.STRING if clazz == classOf[ObjectId] =>
+            case BsonType.STRING if clazz == classOf[UUID] =>
               val stringValue = reader.readString()
-              ObjectId(stringValue).asInstanceOf[V]
+              try UUID.fromString(stringValue).asInstanceOf[V]
+              catch
+                case _: IllegalArgumentException =>
+                  throw new IllegalArgumentException(s"Invalid UUID string format: $stringValue")
 
             case otherType =>
               val effectiveClass = primitiveToBoxed.getOrElse(clazz, clazz).asInstanceOf[Class[V]]
-
               val codec = registry.get(effectiveClass)
+
               val decodedValue: V = codec.decode(reader, decoderContext)
               decodedValue
           end match

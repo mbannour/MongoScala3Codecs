@@ -1,6 +1,5 @@
-package m.bannour.macrocodecs
+package io.github.mbannour.bson.macros
 
-import io.github.mbannour.bson.macros.ClassToCaseFlagMap
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
